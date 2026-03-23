@@ -23,12 +23,20 @@ public class TestBase {
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
+<<<<<<< HEAD
         driver.get(Config.BASE_URL);
+=======
+        driver.get("https://qa-scooter.praktikum-services.ru/");
+>>>>>>> 65cad67c99c225c12f6962f4db4e393045808817
 
         removeCookieBanner();
     }
 
+<<<<<<< HEAD
     protected void removeCookieBanner() {
+=======
+    private void removeCookieBanner() {
+>>>>>>> 65cad67c99c225c12f6962f4db4e393045808817
         try {
             By cookieBanner = By.className("App_CookieConsent__1yUIN");
             if (driver.findElements(cookieBanner).size() > 0) {
