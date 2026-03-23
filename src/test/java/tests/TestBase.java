@@ -18,17 +18,15 @@ public class TestBase {
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox", "--disable-dev-shm-usage");
-        // Для отладки закомментируйте следующую строку, чтобы увидеть браузер
-        options.addArguments("--headless");
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
-        driver.get(Config.BASE_URL);
+        driver.get("https://qa-scooter.praktikum-services.ru/");
 
         removeCookieBanner();
     }
 
-    protected void removeCookieBanner() {
+    private void removeCookieBanner() {
         try {
             By cookieBanner = By.className("App_CookieConsent__1yUIN");
             if (driver.findElements(cookieBanner).size() > 0) {
