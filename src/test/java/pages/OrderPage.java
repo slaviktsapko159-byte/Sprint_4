@@ -8,7 +8,7 @@ public class OrderPage {
     private WebDriver driver;
     private final WebDriverWait wait;
 
-    // Первая форма
+    // Локаторы первой формы
     private final By nameField = By.xpath(".//input[@placeholder='* Имя']");
     private final By surnameField = By.xpath(".//input[@placeholder='* Фамилия']");
     private final By addressField = By.xpath(".//input[@placeholder='* Адрес: куда привезти заказ']");
@@ -16,14 +16,13 @@ public class OrderPage {
     private final By phoneField = By.xpath(".//input[@placeholder='* Телефон: на него позвонит курьер']");
     private final By nextButton = By.xpath(".//button[text()='Далее']");
 
-    // Вторая форма
+    // Локаторы второй формы
     private final By dateField = By.xpath(".//input[@placeholder='* Когда привезти самокат']");
     private final By rentalPeriodField = By.className("Dropdown-control");
     private final By rentalPeriodOption = By.xpath(".//div[contains(@class, 'Dropdown-option')]");
     private final By colorBlack = By.id("black");
     private final By colorGrey = By.id("grey");
     private final By commentField = By.xpath(".//input[@placeholder='Комментарий для курьера']");
-    // Кнопка "Заказать" внизу формы – используем комбинацию классов
     private final By orderButton = By.xpath("//button[contains(@class, 'Button_Button__ra12g') and contains(@class, 'Button_Middle__1CSJM') and text()='Заказать']");
 
     // Модальные окна
@@ -48,62 +47,94 @@ public class OrderPage {
                 wait.until(ExpectedConditions.invisibilityOfElementLocated(cookieBanner));
             }
         } catch (Exception e) {
-            // ignore
         }
     }
 
     private void jsClick(By locator) {
-        removeCookieBanner();
         WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
     }
 
-    public void fillFirstForm(String name, String surname, String address, String metroStation, String phone) {
-        removeCookieBanner();
+    // Шаги для первой формы
 
+    public void fillName(String name) {
         driver.findElement(nameField).sendKeys(name);
-        driver.findElement(surnameField).sendKeys(surname);
-        driver.findElement(addressField).sendKeys(address);
+    }
 
+    public void fillSurname(String surname) {
+        driver.findElement(surnameField).sendKeys(surname);
+    }
+
+    public void fillAddress(String address) {
+        driver.findElement(addressField).sendKeys(address);
+    }
+
+    public void selectMetroStation(String station) {
         WebElement metroInput = driver.findElement(metroStationField);
-        metroInput.sendKeys(metroStation);
+        metroInput.sendKeys(station);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//div[contains(@class, 'select-search__select')]")));
         metroInput.sendKeys(Keys.ARROW_DOWN);
         metroInput.sendKeys(Keys.ENTER);
-        wait.until(ExpectedConditions.attributeToBe(metroStationField, "value", metroStation));
+        wait.until(ExpectedConditions.attributeToBe(metroStationField, "value", station));
+    }
 
+    public void fillPhone(String phone) {
         driver.findElement(phoneField).sendKeys(phone);
-        jsClick(nextButton);
+    }
 
+    public void clickNext() {
+        jsClick(nextButton);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(phoneField));
         wait.until(ExpectedConditions.visibilityOfElementLocated(dateField));
     }
 
-    public void fillSecondForm(String date, int rentalDays, String color, String comment) {
-        removeCookieBanner();
+    public void fillFirstForm(String name, String surname, String address, String metroStation, String phone) {
+        fillName(name);
+        fillSurname(surname);
+        fillAddress(address);
+        selectMetroStation(metroStation);
+        fillPhone(phone);
+        clickNext();
+    }
 
-        // Поле даты
+    // Шаги для второй формы
+
+    public void fillDate(String date) {
         driver.findElement(dateField).sendKeys(date);
         driver.findElement(dateField).sendKeys(Keys.ENTER);
+    }
 
-        // Срок аренды
+    public void selectRentalPeriod(int days) {
         driver.findElement(rentalPeriodField).click();
-        driver.findElements(rentalPeriodOption).get(rentalDays - 1).click();
+        driver.findElements(rentalPeriodOption).get(days - 1).click();
+    }
 
-        // Цвет самоката
+    public void selectColor(String color) {
         if (color.equalsIgnoreCase("black")) {
             driver.findElement(colorBlack).click();
         } else if (color.equalsIgnoreCase("grey")) {
             driver.findElement(colorGrey).click();
         }
+    }
 
-        // Комментарий
+    public void fillComment(String comment) {
         driver.findElement(commentField).sendKeys(comment);
+    }
 
-        // Нажимаем кнопку "Заказать"
+    public void clickOrder() {
         jsClick(orderButton);
     }
+
+    public void fillSecondForm(String date, int rentalDays, String color, String comment) {
+        fillDate(date);
+        selectRentalPeriod(rentalDays);
+        selectColor(color);
+        fillComment(comment);
+        clickOrder();
+    }
+
+    // Подтверждение заказа
 
     public void confirmOrder() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(confirmModal));
