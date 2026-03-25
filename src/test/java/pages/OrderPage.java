@@ -30,24 +30,9 @@ public class OrderPage {
     private final By yesButton = By.xpath(".//button[text()='Да']");
     private final By successText = By.xpath(".//div[contains(text(), 'Заказ оформлен')]");
 
-    // Куки-баннер
-    private final By cookieBanner = By.className("App_CookieConsent__1yUIN");
-
     public OrderPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, 15);
-        removeCookieBanner();
-    }
-
-    private void removeCookieBanner() {
-        try {
-            if (driver.findElements(cookieBanner).size() > 0) {
-                ((JavascriptExecutor) driver).executeScript(
-                        "var banner = document.querySelector('.App_CookieConsent__1yUIN'); if(banner) banner.remove();");
-                wait.until(ExpectedConditions.invisibilityOfElementLocated(cookieBanner));
-            }
-        } catch (Exception e) {
-        }
     }
 
     private void jsClick(By locator) {
